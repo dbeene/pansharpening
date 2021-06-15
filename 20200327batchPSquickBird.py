@@ -2,9 +2,9 @@
 import arcpy
 from arcpy import env
 arcpy.env.overwriteOutput = True
-arcpy.env.workspace = r"C:\Users\darbeene\Desktop\PS\Scenes\Proprietary"
+arcpy.env.workspace = r"C:\Users\darbeene\Desktop\PS\Scenes\Proprietary" # Define workspace
 
-# Define algorithm objects
+# Define algorithms Py objects
 algorithms = [('IHS', ''), ('BROVEY', ''), ('Esri', ''), ('SIMPLE_MEAN', ''), ('Gram-Schmidt', '')]
 
 # Define scenes
@@ -17,27 +17,27 @@ scenes = [
 ('was', 'ms_was.tif','pan_was.tif',3,2,1,4,0.3601,0.09414,0.3964,0.1494)
 ]
 
-# Compute Weights
+# Compute Weights (only required for Esri)
 
 ##for s in scenes:
 ##    arcpy.ComputePansharpenWeights_management('{}'.format(s[1]),'{}'.format(s[2]),str('{}'.format(s[3]) + " " + '{}'.format(s[4]) + " " + '{}'.format(s[5]) + " " + '{}'.format(s[6])))
 
+# Create pansharpened rasters using nested for loop
 for s in scenes:
     for a in algorithms:
         arcpy.CreatePansharpenedRasterDataset_management(
-        '{}'.format(s[1]),
-        '{}'.format(s[3]),
-        '{}'.format(s[4]),
-        '{}'.format(s[5]),
-        '{}'.format(s[6]),
-        arcpy.env.workspace + '\Processed\\'+'{}'.format(a[0])+'_'+'{}'.format(s[0])+'.tif',
-        '{}'.format(s[2]),
-        '{}'.format(a[0]),
-        '{}'.format(s[7]),
-        '{}'.format(s[8]),
-        '{}'.format(s[9]),
-        '{}'.format(s[10]),
-        '{}'.format(a[1]))
+        '{}'.format(s[1]), # in_raster
+        '{}'.format(s[3]), # red_channel
+        '{}'.format(s[4]), # green_channel
+        '{}'.format(s[5]), # blue_channel
+        '{}'.format(s[6]), # infrared_channel
+        arcpy.env.workspace + '\Processed\\'+'{}'.format(a[0])+'_'+'{}'.format(s[0])+'.tif', # out_raster_dataset
+        '{}'.format(s[2]), # in_panchromatic_image
+        '{}'.format(a[0]), # pansharpening_type
+        '{}'.format(s[7]), # red_weight
+        '{}'.format(s[8]), # green_weight
+        '{}'.format(s[9]), # blue_weight
+        '{}'.format(s[10]), # infrared_weight
+        '{}'.format(a[1])) # sensor
 
-    # Calculate NDVI
-    NDVI
+    # Calculate NDVI, in separate script, <ndvi.py>

@@ -4,7 +4,7 @@ from arcpy import env
 arcpy.env.overwriteOutput = True
 arcpy.env.workspace = r"C:\Users\darbeene\Desktop\PS\Scenes\Landsat"
 
-# Define algorithm objects
+# Define algorithms as Py objects
 algorithms = [('IHS', ''), ('BROVEY', ''), ('Esri', ''), ('SIMPLE_MEAN', ''), ('Gram-Schmidt', 'Landsat 8')]
 
 # Define scenes
@@ -16,20 +16,22 @@ scenes = [
 ('was', 'ms_was.img','pan_was.img',0.572,0,0.4162,0.01179)
 ]
 
-for s in scenes:
-    arcpy.ComputePansharpenWeights_management('{}'.format(s[1]),'{}'.format(s[2]),"4 3 2 5")
+# Compute Weights (only required for Esri)
 
+##for s in scenes:
+##    arcpy.ComputePansharpenWeights_management('{}'.format(s[1]),'{}'.format(s[2]),"4 3 2 5")
+
+# Create pansharpened rasters using nested for loop
 for s in scenes:
     for a in algorithms:
         arcpy.CreatePansharpenedRasterDataset_management(
-        '{}'.format(s[1]),
-        4,3,2,5,
-        arcpy.env.workspace + '\Processed\\'+'{}'.format(a[0])+'_'+'{}'.format(s[0])+'.tif',
-        '{}'.format(s[2]),
-        '{}'.format(a[0]),
-        '{}'.format(s[3]),
-        '{}'.format(s[4]),
-        '{}'.format(s[5]),
-        '{}'.format(s[6]),
-        '{}'.format(a[1]))
-
+        '{}'.format(s[1]), # in_raster
+        4,3,2,5, # r, g, b, nir channels
+        arcpy.env.workspace + '\Processed\\'+'{}'.format(a[0])+'_'+'{}'.format(s[0])+'.tif' # out_raster_dataset
+        , '{}'.format(s[2]) # in_panchromatic_image
+        , '{}'.format(a[0]) # pansharpening_type
+        , '{}'.format(s[3]) # red_weight
+        , '{}'.format(s[4]) # green_weight
+        , '{}'.format(s[5]) # blue_weight
+        , '{}'.format(s[6]) # infrared_weight
+        , '{}'.format(a[1])) # sensor
